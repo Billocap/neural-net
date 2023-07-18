@@ -2,17 +2,19 @@
 precision mediump float;
 #endif
 
-uniform vec2 u_resolution;
-uniform vec3 u_values;
+#define PI 3.1415926538
+
+uniform vec2 resolution;
+uniform vec3 values;
 
 float sigma(float x) {
-  return 1.0 / (1.0 + exp(-x));
+  return 2.0 * atan(x) / PI;
 }
 
 void main() {
-  vec2 st = gl_FragCoord.xy / u_resolution.xy;
+  vec2 st = gl_FragCoord.xy / resolution;
 
-  float r = u_values.x * gl_FragCoord.x + u_values.y * gl_FragCoord.y + u_values.z;
+  float r = st.x * values.x + st.y * values.y + values.z;
 
-  gl_FragColor = vec4(vec3(sigma(r)), 1.0);
+  gl_FragColor = vec4(sigma(r) > 0.0 ? vec3(1.0, 0.0, 0.0) : vec3(0.0, 1.0, 0.0), 1.0);
 }
