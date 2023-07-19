@@ -52,7 +52,7 @@ class DrawTraining extends Sketch {
       avg = grad.map((n, i) => n + avg[i]);
     }
 
-    avg = avg.map((n) => n / avg.length);
+    avg = avg.map((n) => n / this.dataset.length);
 
     this.neuralNet.train(...avg);
   }
