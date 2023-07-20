@@ -8,5 +8,10 @@ interface iPoint {
 interface Point {
   x: number;
   y: number;
-  label: number;
+  label: number[];
+}
+
+interface iGradient {
+  weights: number[][];
+  biases: number[];
 }
