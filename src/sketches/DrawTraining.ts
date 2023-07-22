@@ -6,13 +6,13 @@ import Sketch from "../lib/Sketch";
 class DrawTraining extends Sketch {
   private _width: number;
   private _height: number;
-  private dataset: iPoint[];
+  private dataset: iData[];
   private neuralNet: NeuralNet;
 
   constructor(
     width: number,
     height: number,
-    dataset: iPoint[],
+    dataset: iData[],
     neuralNet: NeuralNet
   ) {
     super();
@@ -34,7 +34,7 @@ class DrawTraining extends Sketch {
 
     for (const point of this.dataset) {
       this.stroke(point.label[0] * 128, point.label[1] * 128, 0);
-      this.point(point.x, point.y);
+      this.point(point.value[0], point.value[1]);
     }
 
     this.strokeWeight(3);
@@ -44,12 +44,15 @@ class DrawTraining extends Sketch {
     t.next();
 
     for (const point of this.dataset) {
-      const ff = this.neuralNet.ff(point.x / 400, point.y / 400);
+      const ff = this.neuralNet.ff([
+        point.value[0] / 400,
+        point.value[1] / 400
+      ]);
 
       const r = ff.next().value as iVector;
 
       this.stroke(r[0] * 255, r[1] * 255, 128);
-      this.point(point.x, point.y);
+      this.point(point.value[0], point.value[1]);
 
       const dC = math.multiply(2, math.subtract(r, point.label)) as iVector;
 

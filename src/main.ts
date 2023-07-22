@@ -1,40 +1,31 @@
 import DrawTraining from "./sketches/DrawTraining";
 import NeuralNet from "./lib/NeuralNet";
+import Dataset from "./lib/Dataset";
 
 import "./style.css";
+
+const generate = () => [Math.random() * 400, Math.random() * 400];
 
 const m = Math.random() * 2 - 1;
 
 const n = Math.random() * 400;
 
-const classify = (x: number, y: number) => {
+const lineClassifier = ([x, y]: iVector) => {
   return m * x + n > y ? [1, 0] : [0, 1];
 };
 
-// const classify = (x: number, y: number) => {
-//   return x * x + y * y > 200 * 200 ? [1, 0] : [0, 1];
-// };
+const circleClassifier = ([x, y]: iVector) => {
+  return x * x + y * y > 200 * 200 ? [1, 0] : [0, 1];
+};
 
-const dataset: iPoint[] = [];
+const dataset = new Dataset(500);
 
-for (let d = 0; d < 500; d++) {
-  const x = Math.random() * 400;
-  const y = Math.random() * 400;
-  const label = classify(x, y);
+dataset.generate(generate, circleClassifier);
 
-  dataset.push({ x, y, label });
-}
-
-// active(x: number) {
-//   return (2 * Math.atan(x)) / Math.PI;
-// }
-
-// pActive(x: number) {
-//   return 2 / (Math.PI * (1 + x * x));
-// }
+const arctan = (x: number) => (2 * Math.atan(x)) / Math.PI;
+const arctanPrime = (x: number) => 2 / (Math.PI * (1 + x * x));
 
 const sigma = (x: number) => 1 / (1 + Math.exp(-x));
-
 const sigmaPrime = (x: number) => sigma(x) * (1 - sigma(x));
 
 const nn = new NeuralNet(2, 2);

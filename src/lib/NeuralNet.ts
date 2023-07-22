@@ -26,7 +26,7 @@ class NeuralNet {
     this.pActive = prime;
   }
 
-  *ff(...inputs: iVector): Generator<iVector, iGradient, iVector> {
+  *ff(inputs: iVector): Generator<iVector, iGradient, iVector> {
     const { weights, biases, active, pActive } = this;
 
     const zs = math.add(math.multiply(inputs, weights), biases);
