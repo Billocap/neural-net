@@ -1,14 +1,15 @@
+import * as math from "mathjs";
+
 class NeuralNet {
-  public ws: number[];
-  public b: number;
+  public weights: number[][];
+  public biases: number[];
   public rate: number;
 
-  constructor() {
-    this.ws = [Math.random() * 2 - 1, Math.random() * 2 - 1];
+  constructor(...s: number[]) {
+    this.weights = <number[][]>math.map(math.zeros(s), () => 1);
+    this.biases = <number[]>math.map(math.zeros([s[1]]), () => 1);
 
-    this.b = Math.random();
-
-    this.rate = 0.1;
+    this.rate = 1;
   }
 
   active(x: number) {
@@ -19,26 +20,31 @@ class NeuralNet {
     return 2 / (Math.PI * (1 + x * x));
   }
 
-  *feedforward(...inputs: number[]): Generator<number, number[], number> {
-    const z = this.ws[0] * inputs[0] + this.ws[1] * inputs[1] + this.b;
+  *ff(
+    ...inputs: number[]
+  ): Generator<number[], [number[][], number[]], number[]> {
+    const wSum = math.multiply(inputs, this.weights);
 
-    const a = this.active(z);
+    const zs = math.add(wSum, this.biases);
 
-    const y = yield a;
+    const dC = yield math.map(zs, (x) => this.active(x));
 
-    const dC = 2 * (a - y);
+    const dA = math.map(zs, (x) => this.pActive(x));
 
-    const dA = this.pActive(z);
+    const gradB = dA.map((a, i) => a * dC[i]);
 
-    return [dC * dA * inputs[0], dC * dA * inputs[1], dC * dA];
+    const gradW = inputs.map((i) => gradB.map((g) => i * g));
+
+    return [gradW, gradB];
   }
 
-  train(...grad: number[]) {
-    const [w1, w2, b] = grad;
+  train(gradW: number[][], gradB: number[]) {
+    const { weights, biases, rate } = this;
 
-    this.ws[0] -= w1 * this.rate;
-    this.ws[1] -= w2 * this.rate;
-    this.b -= b * this.rate;
+    this.weights = <number[][]>(
+      math.subtract(weights, math.multiply(gradW, rate))
+    );
+    this.biases = <number[]>math.subtract(biases, math.multiply(gradB, rate));
   }
 }
 
