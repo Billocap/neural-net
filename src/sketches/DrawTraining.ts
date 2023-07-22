@@ -28,7 +28,7 @@ class DrawTraining extends Sketch {
   }
 
   draw() {
-    this.background(0);
+    this.background(128);
 
     this.strokeWeight(5);
 
@@ -39,7 +39,9 @@ class DrawTraining extends Sketch {
 
     this.strokeWeight(3);
 
-    let avg = [math.zeros([2, 2]), math.zeros([2])] as [iMatrix, iVector];
+    const t = this.neuralNet.train();
+
+    t.next();
 
     for (const point of this.dataset) {
       const ff = this.neuralNet.ff(point.x / 400, point.y / 400);
@@ -53,16 +55,12 @@ class DrawTraining extends Sketch {
 
       const [gW, gB] = ff.next(dC).value as [iMatrix, iVector];
 
-      avg[0] = math.add(avg[0], gW) as iMatrix;
-      avg[1] = math.add(avg[1], gB) as iVector;
+      t.next([gW, gB]);
     }
 
     const s = 1 / this.dataset.length;
 
-    avg[0] = math.multiply(avg[0], s) as iMatrix;
-    avg[1] = math.multiply(avg[1], s) as iVector;
-
-    this.neuralNet.train(avg);
+    t.next(s);
   }
 }
 

@@ -11,10 +11,6 @@ interface Point {
   label: number[];
 }
 
-interface iGradient {
-  weights: number[][];
-  biases: number[];
-}
-
 type iMatrix = number[][];
 type iVector = number[];
+type iGradient = [iMatrix, iVector];

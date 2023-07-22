@@ -5,7 +5,11 @@ class NeuralNet {
   public biases: iVector;
   public rate: number;
 
+  private size: number[];
+
   constructor(...s: number[]) {
+    this.size = s;
+
     this.weights = math.map(math.zeros(s), () => math.random()) as iMatrix;
     this.biases = math.map(math.zeros([s[1]]), () => math.random()) as iVector;
 
@@ -28,7 +32,7 @@ class NeuralNet {
     return this.active(x) * (1 - this.active(x));
   }
 
-  *ff(...inputs: iVector): Generator<iVector, [iMatrix, iVector], iVector> {
+  *ff(...inputs: iVector): Generator<iVector, iGradient, iVector> {
     const wSum = math.multiply(inputs, this.weights);
 
     const zs = math.add(wSum, this.biases);
@@ -44,11 +48,33 @@ class NeuralNet {
     return [gradW, gradB];
   }
 
-  train([gradW, gradB]: [iMatrix, iVector]) {
-    const { weights, biases, rate } = this;
+  *train(): Generator<void, void, iGradient | number> {
+    const [m, n] = this.size;
 
-    this.weights = <iMatrix>math.subtract(weights, math.multiply(gradW, rate));
-    this.biases = <iVector>math.subtract(biases, math.multiply(gradB, rate));
+    const avg = [math.zeros([m, n]), math.zeros([n])] as iGradient;
+
+    while (true) {
+      const r = yield;
+
+      if (Array.isArray(r)) {
+        const [gradW, gradB] = r;
+
+        avg[0] = math.add(avg[0], gradW) as iMatrix;
+        avg[1] = math.add(avg[1], gradB) as iVector;
+      } else {
+        const { weights, biases, rate } = this;
+
+        avg[0] = math.multiply(avg[0], r) as iMatrix;
+        avg[1] = math.multiply(avg[1], r) as iVector;
+
+        const [gW, gB] = avg;
+
+        this.weights = <iMatrix>math.subtract(weights, math.multiply(gW, rate));
+        this.biases = <iVector>math.subtract(biases, math.multiply(gB, rate));
+
+        break;
+      }
+    }
   }
 }
 
