@@ -6,13 +6,13 @@ import Sketch from "../lib/Sketch";
 class DrawTraining extends Sketch {
   private _width: number;
   private _height: number;
-  private dataset: Point[];
+  private dataset: iPoint[];
   private neuralNet: NeuralNet;
 
   constructor(
     width: number,
     height: number,
-    dataset: Point[],
+    dataset: iPoint[],
     neuralNet: NeuralNet
   ) {
     super();
@@ -58,9 +58,7 @@ class DrawTraining extends Sketch {
       t.next([gW, gB]);
     }
 
-    const s = 1 / this.dataset.length;
-
-    t.next(s);
+    t.next();
   }
 }
 
