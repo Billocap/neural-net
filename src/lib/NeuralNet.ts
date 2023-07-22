@@ -1,15 +1,15 @@
 import * as math from "mathjs";
 
 class NeuralNet {
-  public weights: number[][];
-  public biases: number[];
+  public weights: iMatrix;
+  public biases: iVector;
   public rate: number;
 
   constructor(...s: number[]) {
-    this.weights = <number[][]>math.map(math.zeros(s), () => 1);
-    this.biases = <number[]>math.map(math.zeros([s[1]]), () => 1);
+    this.weights = math.map(math.zeros(s), () => math.random()) as iMatrix;
+    this.biases = math.map(math.zeros([s[1]]), () => math.random()) as iVector;
 
-    this.rate = 1;
+    this.rate = 0.1;
   }
 
   // active(x: number) {
@@ -28,9 +28,7 @@ class NeuralNet {
     return this.active(x) * (1 - this.active(x));
   }
 
-  *ff(
-    ...inputs: number[]
-  ): Generator<number[], [number[][], number[]], number[]> {
+  *ff(...inputs: iVector): Generator<iVector, [iMatrix, iVector], iVector> {
     const wSum = math.multiply(inputs, this.weights);
 
     const zs = math.add(wSum, this.biases);
@@ -46,13 +44,11 @@ class NeuralNet {
     return [gradW, gradB];
   }
 
-  train(gradW: number[][], gradB: number[]) {
+  train([gradW, gradB]: [iMatrix, iVector]) {
     const { weights, biases, rate } = this;
 
-    this.weights = <number[][]>(
-      math.subtract(weights, math.multiply(gradW, rate))
-    );
-    this.biases = <number[]>math.subtract(biases, math.multiply(gradB, rate));
+    this.weights = <iMatrix>math.subtract(weights, math.multiply(gradW, rate));
+    this.biases = <iVector>math.subtract(biases, math.multiply(gradB, rate));
   }
 }
 

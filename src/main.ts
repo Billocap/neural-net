@@ -1,5 +1,3 @@
-import * as math from "mathjs";
-
 import DrawTraining from "./sketches/DrawTraining";
 import NeuralNet from "./lib/NeuralNet";
 
@@ -9,13 +7,13 @@ const m = Math.random() * 2 - 1;
 
 const n = Math.random() * 400;
 
-// const classify = (x: number, y: number) => {
-//   return m * x + n > y ? [1, 0] : [0, 1];
-// };
-
 const classify = (x: number, y: number) => {
-  return x * x + y * y > 200 * 200 ? [1, 0] : [0, 1];
+  return m * x + n > y ? [1, 0] : [0, 1];
 };
+
+// const classify = (x: number, y: number) => {
+//   return x * x + y * y > 200 * 200 ? [1, 0] : [0, 1];
+// };
 
 const dataset: Point[] = [];
 

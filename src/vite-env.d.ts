@@ -15,3 +15,6 @@ interface iGradient {
   weights: number[][];
   biases: number[];
 }
+
+type iMatrix = number[][];
+type iVector = number[];

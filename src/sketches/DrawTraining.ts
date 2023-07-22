@@ -28,44 +28,41 @@ class DrawTraining extends Sketch {
   }
 
   draw() {
-    this.background(128);
+    this.background(0);
 
-    this.strokeWeight(4);
+    this.strokeWeight(5);
 
     for (const point of this.dataset) {
-      this.stroke(point.label[0] * 255, point.label[1] * 255, 0);
+      this.stroke(point.label[0] * 128, point.label[1] * 128, 0);
       this.point(point.x, point.y);
     }
 
     this.strokeWeight(3);
 
-    const avg: iGradient = {
-      weights: math.zeros([2, 1]) as number[][],
-      biases: math.zeros([1]) as number[]
-    };
+    let avg = [math.zeros([2, 2]), math.zeros([2])] as [iMatrix, iVector];
 
     for (const point of this.dataset) {
       const ff = this.neuralNet.ff(point.x / 400, point.y / 400);
 
-      const r = ff.next().value as number[];
+      const r = ff.next().value as iVector;
 
       this.stroke(r[0] * 255, r[1] * 255, 128);
       this.point(point.x, point.y);
 
-      const dC = math.multiply(2, math.subtract(r, point.label)) as number[];
+      const dC = math.multiply(2, math.subtract(r, point.label)) as iVector;
 
-      const [gW, gB] = ff.next(dC).value as [number[][], number[]];
+      const [gW, gB] = ff.next(dC).value as [iMatrix, iVector];
 
-      avg.weights = math.add(avg.weights, gW) as number[][];
-      avg.biases = math.add(avg.biases, gB) as number[];
+      avg[0] = math.add(avg[0], gW) as iMatrix;
+      avg[1] = math.add(avg[1], gB) as iVector;
     }
 
     const s = 1 / this.dataset.length;
 
-    avg.weights = math.multiply(avg.weights, s) as number[][];
-    avg.biases = math.multiply(avg.biases, s) as number[];
+    avg[0] = math.multiply(avg[0], s) as iMatrix;
+    avg[1] = math.multiply(avg[1], s) as iVector;
 
-    this.neuralNet.train(avg.weights, avg.biases);
+    this.neuralNet.train(avg);
   }
 }
 
