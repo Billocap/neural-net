@@ -1,6 +1,6 @@
 import * as math from "mathjs";
 
-class NeuralNet {
+class Layer {
   public weights: iMatrix;
   public biases: iVector;
   public rate: number;
@@ -76,4 +76,4 @@ class NeuralNet {
   }
 }
 
-export default NeuralNet;
+export default Layer;
