@@ -12,12 +12,20 @@ class NeuralNet {
     this.rate = 1;
   }
 
+  // active(x: number) {
+  //   return (2 * Math.atan(x)) / Math.PI;
+  // }
+
+  // pActive(x: number) {
+  //   return 2 / (Math.PI * (1 + x * x));
+  // }
+
   active(x: number) {
-    return (2 * Math.atan(x)) / Math.PI;
+    return 1 / (1 + Math.exp(-x));
   }
 
   pActive(x: number) {
-    return 2 / (Math.PI * (1 + x * x));
+    return this.active(x) * (1 - this.active(x));
   }
 
   *ff(

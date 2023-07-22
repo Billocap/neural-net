@@ -33,7 +33,7 @@ class DrawTraining extends Sketch {
     this.strokeWeight(4);
 
     for (const point of this.dataset) {
-      this.stroke(point.label[0] > 0 ? "red" : "green");
+      this.stroke(point.label[0] * 255, point.label[1] * 255, 0);
       this.point(point.x, point.y);
     }
 
@@ -49,7 +49,7 @@ class DrawTraining extends Sketch {
 
       const r = ff.next().value as number[];
 
-      this.stroke((r[0] * 0.5 + 0.5) * 255);
+      this.stroke(r[0] * 255, r[1] * 255, 128);
       this.point(point.x, point.y);
 
       const dC = math.multiply(2, math.subtract(r, point.label)) as number[];
