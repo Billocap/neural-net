@@ -1,26 +1,26 @@
 import * as math from "mathjs";
 
-import Layer from "../lib/Layer";
 import Sketch from "../lib/Sketch";
+import NeuralNet from "../lib/NeuralNet";
 
 class DrawTraining extends Sketch {
   private _width: number;
   private _height: number;
   private dataset: iData[];
-  private layers: Layer[];
+  private neuralNet: NeuralNet;
 
   constructor(
     width: number,
     height: number,
     dataset: iData[],
-    layers: Layer[]
+    neuralNet: NeuralNet
   ) {
     super();
 
     this._width = width;
     this._height = height;
     this.dataset = dataset;
-    this.layers = layers;
+    this.neuralNet = neuralNet;
   }
 
   setup() {
@@ -28,9 +28,11 @@ class DrawTraining extends Sketch {
   }
 
   draw() {
+    document.title = Math.round(this.frameRate()).toString();
+
     this.background(128);
 
-    this.strokeWeight(5);
+    this.strokeWeight(4);
 
     for (const point of this.dataset) {
       this.stroke(point.label[0] * 128, point.label[1] * 128, 0);
@@ -39,39 +41,26 @@ class DrawTraining extends Sketch {
 
     this.strokeWeight(3);
 
-    const t0 = this.layers[0].train();
-    const t1 = this.layers[1].train();
+    const t = this.neuralNet.train();
 
-    t0.next();
-    t1.next();
+    t.next();
 
     for (const point of this.dataset) {
-      const ff0 = this.layers[0].ff(point.value);
+      const ff = this.neuralNet.ff(point.value);
 
-      const r0 = ff0.next().value as iVector;
-
-      const ff1 = this.layers[1].ff(r0);
-
-      const r = ff1.next().value as iVector;
+      const r = ff.next().value as iVector;
 
       this.stroke(r[0] * 255, r[1] * 255, 128);
       this.point(point.value[0] * 400, point.value[1] * 400);
 
       let dC = math.multiply(2, math.subtract(r, point.label)) as iVector;
 
-      const [gW, gB] = ff1.next(dC).value as iGradient;
+      const grad = ff.next(dC).value as iGradient[];
 
-      t1.next([gW, gB]);
-
-      dC = math.multiply(gB, math.transpose(this.layers[1].weights));
-
-      const [g0W, g0B] = ff0.next(dC).value as iGradient;
-
-      t0.next([g0W, g0B]);
+      t.next(grad);
     }
 
-    t0.next();
-    t1.next();
+    t.next();
   }
 }
 

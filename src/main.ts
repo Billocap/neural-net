@@ -3,6 +3,7 @@ import Layer from "./lib/Layer";
 import Dataset from "./lib/Dataset";
 
 import "./style.css";
+import NeuralNet from "./lib/NeuralNet";
 
 const generate = () => [Math.random(), Math.random()];
 
@@ -15,7 +16,7 @@ const lineClassifier = ([x, y]: iVector) => {
 };
 
 const circleClassifier = ([x, y]: iVector) => {
-  return x * x + y * y > 0.5 * 0.5 ? [1, 0] : [0, 1];
+  return (x - 0.5) ** 2 + (y - 0.5) ** 2 > 0.4 ** 2 ? [1, 0] : [0, 1];
 };
 
 const dataset = new Dataset(500);
@@ -28,9 +29,8 @@ const arctanPrime = (x: number) => 2 / (Math.PI * (1 + x * x));
 const sigma = (x: number) => 1 / (1 + Math.exp(-x));
 const sigmaPrime = (x: number) => sigma(x) * (1 - sigma(x));
 
-const ls = [new Layer(2, 3), new Layer(3, 2)];
+const nn = new NeuralNet(2, 3, 3, 2);
 
-ls[0].functions(sigma, sigmaPrime);
-ls[1].functions(sigma, sigmaPrime);
+nn.functions(sigma, sigmaPrime);
 
-new DrawTraining(400, 400, dataset, ls);
+new DrawTraining(400, 400, dataset, nn);
