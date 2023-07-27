@@ -32,35 +32,37 @@ class DrawTraining extends Sketch {
 
     this.background(128);
 
-    this.strokeWeight(4);
+    const training = this.neuralNet.train(this.dataset);
 
-    for (const point of this.dataset) {
-      this.stroke(point.label[0] * 128, point.label[1] * 128, 0);
+    let error = 0;
+
+    for (const [point, r] of training) {
+      this.strokeWeight(4);
+
+      this.stroke(
+        point.label[0] * 128,
+        point.label[1] * 128,
+        point.label[2] * 128
+      );
+      this.point(point.value[0] * 400, point.value[1] * 400);
+
+      error += math.subtract(r, point.label).reduce((a, n) => a + n * n);
+
+      this.strokeWeight(3);
+
+      this.stroke(r[0] * 255, r[1] * 255, r[2] * 255);
       this.point(point.value[0] * 400, point.value[1] * 400);
     }
 
-    this.strokeWeight(3);
+    error /= this.dataset.length;
 
-    const t = this.neuralNet.train();
+    this.text(error, 10, 20);
 
-    t.next();
+    // if (error < 0.009) {
+    //   console.log(this.neuralNet.layers);
 
-    for (const point of this.dataset) {
-      const ff = this.neuralNet.ff(point.value);
-
-      const r = ff.next().value as iVector;
-
-      this.stroke(r[0] * 255, r[1] * 255, 128);
-      this.point(point.value[0] * 400, point.value[1] * 400);
-
-      let dC = math.multiply(2, math.subtract(r, point.label)) as iVector;
-
-      const grad = ff.next(dC).value as iGradient[];
-
-      t.next(grad);
-    }
-
-    t.next();
+    //   this.noLoop();
+    // }
   }
 }
 

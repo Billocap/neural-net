@@ -11,10 +11,18 @@ class NeuralNet {
     for (let l = 0; l < s.length - 1; l++) {
       const layer = new Layer(s[l], s[l + 1]);
 
-      layer.rate = 0.1;
+      layer.rate = 1;
 
       this.layers.push(layer);
     }
+  }
+
+  save() {
+    this.layers.forEach((layer, i) => layer.save(i));
+  }
+
+  load() {
+    this.layers.forEach((layer, i) => layer.load(i));
   }
 
   functions(fun: iActivation, prime: iActivation) {
@@ -47,22 +55,26 @@ class NeuralNet {
     return grad.reverse();
   }
 
-  *train(): Generator<void, void, iGradient[] | undefined> {
+  *train(dataset: iData[]): Generator<[iData, iVector], void, unknown> {
     const ts = this.layers.map((l) => l.train());
 
     for (const t of ts) t.next();
 
-    while (true) {
-      const grad = yield;
+    for (const point of dataset) {
+      const ff = this.ff(point.value);
 
-      if (grad) {
-        grad.forEach((g, i) => ts[i].next(g));
-      } else {
-        for (const t of ts) t.next();
+      const r = ff.next().value as iVector;
 
-        break;
-      }
+      yield [point, r];
+
+      let dC = math.multiply(2, math.subtract(r, point.label)) as iVector;
+
+      const grad = ff.next(dC).value as iGradient[];
+
+      grad.forEach((g, i) => ts[i].next(g));
     }
+
+    for (const t of ts) t.next();
   }
 }
 

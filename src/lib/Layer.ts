@@ -4,8 +4,8 @@ class Layer {
   public weights: iMatrix;
   public biases: iVector;
   public rate: number;
+  public size: number[];
 
-  private size: number[];
   private active: iActivation;
   private pActive: iActivation;
 
@@ -19,6 +19,27 @@ class Layer {
 
     this.active = (n) => n;
     this.pActive = (n) => n;
+  }
+
+  save(id: number) {
+    localStorage.setItem(
+      `layer-${id}`,
+      JSON.stringify({
+        weights: this.weights,
+        biases: this.biases
+      })
+    );
+  }
+
+  load(id: number) {
+    const data = localStorage.getItem(`layer-${id}`);
+
+    if (data) {
+      const { weights, biases } = JSON.parse(data);
+
+      this.weights = weights;
+      this.biases = biases;
+    }
   }
 
   functions(fun: iActivation, prime: iActivation) {
