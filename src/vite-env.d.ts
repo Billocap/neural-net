@@ -13,6 +13,7 @@ interface iData {
 }
 
 interface iLayer {
+  size: number[];
   weights: iMatrix;
   biases: iVector;
 }
