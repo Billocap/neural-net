@@ -8,8 +8,6 @@ uniform int sizes[100];
 uniform float weights[100];
 uniform float biases[100];
 
-uniform float result[100];
-
 float sigma(float x) {
   return 1.0 / (1.0 + exp(-x));
 }

@@ -2,7 +2,6 @@ import p5 from "p5";
 import * as math from "mathjs";
 
 import Sketch from "../lib/Sketch";
-import NeuralNet from "../lib/NeuralNet";
 
 import vertexShader from "../assets/p5.vert?raw";
 import fragmentShader from "../assets/nn.frag?raw";
@@ -12,9 +11,9 @@ let shader: p5.Shader;
 class DrawDomain extends Sketch {
   private _width: number;
   private _height: number;
-  private neuralNet: NeuralNet;
+  private neuralNet: iModel;
 
-  constructor(width: number, height: number, neuralNet: NeuralNet) {
+  constructor(width: number, height: number, neuralNet: iModel) {
     super();
 
     this._width = width;
@@ -56,8 +55,6 @@ class DrawDomain extends Sketch {
     shader.setUniform("sizes", uniforms.sizes);
     shader.setUniform("weights", uniforms.weights);
     shader.setUniform("biases", uniforms.biases);
-
-    shader.setUniform("result", []);
 
     this.rect(0, 0, this.width, this.height);
   }
