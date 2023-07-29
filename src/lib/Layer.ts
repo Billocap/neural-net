@@ -1,6 +1,6 @@
 import * as math from "mathjs";
 
-class Layer {
+class Layer implements iLayer {
   public weights: iMatrix;
   public biases: iVector;
   public rate: number;
@@ -19,27 +19,6 @@ class Layer {
 
     this.active = (n) => n;
     this.pActive = (n) => n;
-  }
-
-  save(id: number) {
-    localStorage.setItem(
-      `layer-${id}`,
-      JSON.stringify({
-        weights: this.weights,
-        biases: this.biases
-      })
-    );
-  }
-
-  load(id: number) {
-    const data = localStorage.getItem(`layer-${id}`);
-
-    if (data) {
-      const { weights, biases } = JSON.parse(data);
-
-      this.weights = weights;
-      this.biases = biases;
-    }
   }
 
   functions(fun: iActivation, prime: iActivation) {

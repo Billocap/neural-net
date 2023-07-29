@@ -1,4 +1,5 @@
 import p5 from "p5";
+import * as math from "mathjs";
 
 import Sketch from "../lib/Sketch";
 import NeuralNet from "../lib/NeuralNet";
@@ -33,27 +34,30 @@ class DrawDomain extends Sketch {
     this.shader(shader);
 
     const uniforms = {
-      w_sizes: [] as number[],
+      sizes: [] as number[],
       weights: [] as number[],
-      b_sizes: [] as number[],
       biases: [] as number[]
     };
 
-    for (const { weights, biases, size } of this.neuralNet.layers) {
-      uniforms.w_sizes.push(...size);
-      for (const row of weights) uniforms.weights.push(...row);
+    uniforms.sizes.push(this.neuralNet.layers[0].size[0]);
 
-      uniforms.b_sizes.push(size[1]);
+    for (const { weights, biases, size } of this.neuralNet.layers) {
+      const ws = math.transpose(weights);
+
+      for (const row of ws) uniforms.weights.push(...row);
+
       uniforms.biases.push(...biases);
+
+      uniforms.sizes.push(size[1]);
     }
 
     shader.setUniform("resolution", [400, 400]);
 
-    shader.setUniform("w_sizes", uniforms.w_sizes);
+    shader.setUniform("sizes", uniforms.sizes);
     shader.setUniform("weights", uniforms.weights);
-
-    shader.setUniform("b_sizes", uniforms.b_sizes);
     shader.setUniform("biases", uniforms.biases);
+
+    shader.setUniform("result", []);
 
     this.rect(0, 0, this.width, this.height);
   }

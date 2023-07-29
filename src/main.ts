@@ -1,6 +1,6 @@
 import DrawTraining from "./sketches/DrawTraining";
-import DrawMouseClass from "./sketches/DrawMouseClass";
 import DrawDomain from "./sketches/DrawDomain";
+
 import Dataset from "./lib/Dataset";
 import NeuralNet from "./lib/NeuralNet";
 
@@ -45,11 +45,3 @@ nn.functions(sigma, sigmaPrime);
 new DrawTraining(400, 400, dataset, nn);
 
 new DrawDomain(400, 400, nn);
-
-document.querySelector("#save-state")?.addEventListener("click", () => {
-  nn.save();
-});
-
-document.querySelector("#load-state")?.addEventListener("click", () => {
-  nn.load();
-});

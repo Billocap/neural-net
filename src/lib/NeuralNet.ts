@@ -2,7 +2,7 @@ import * as math from "mathjs";
 
 import Layer from "./Layer";
 
-class NeuralNet {
+class NeuralNet implements iModel {
   public layers: Layer[];
 
   constructor(...s: number[]) {
@@ -15,14 +15,6 @@ class NeuralNet {
 
       this.layers.push(layer);
     }
-  }
-
-  save() {
-    this.layers.forEach((layer, i) => layer.save(i));
-  }
-
-  load() {
-    this.layers.forEach((layer, i) => layer.load(i));
   }
 
   functions(fun: iActivation, prime: iActivation) {
