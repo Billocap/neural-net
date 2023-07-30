@@ -15,6 +15,19 @@
     <title>Neural Net</title>
   </head>
   <body>
+    <div id="tool-bar">
+      <button id="save-state">save</button>
+      <button id="load-state">load</button>
+      <button id="export-state">export</button>
+      <input
+        type="file"
+        id="import-state"
+        accept="application/json"
+      />
+    </div>
+
+    <main></main>
+
     <script
       type="module"
       src="/src/main.ts"
