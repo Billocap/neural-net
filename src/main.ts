@@ -45,7 +45,7 @@ nn.functions(sigma, sigmaPrime);
 
 new DrawTraining(400, 400, dataset, nn);
 
-// new DrawDomain(400, 400, nn);
+new DrawDomain(400, 400, nn).draw();
 
 // setInterval(() => {
 //   StateManager.save("autosave", nn);

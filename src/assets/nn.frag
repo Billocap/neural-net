@@ -13,7 +13,7 @@ float sigma(float x) {
 }
 
 void main() {
-  vec2 st = gl_FragCoord.xy / (2.0 * resolution);
+  vec2 st = gl_FragCoord.xy / resolution;
 
   float a0 = sigma(weights[0] * st.x + weights[1] * st.y + biases[0]);
   float a1 = sigma(weights[2] * st.x + weights[3] * st.y + biases[1]);
@@ -23,5 +23,5 @@ void main() {
   float b1 = sigma(a0 * weights[9] + a1 * weights[10] + a2 * weights[11] + biases[4]);
   float b2 = sigma(a0 * weights[12] + a1 * weights[13] + a2 * weights[14] + biases[5]);
 
-  gl_FragColor = vec4(b0, b1, b2, 1.0);
+  gl_FragColor = vec4(st, 0.5, 1.0);
 }

@@ -1,46 +1,78 @@
-import p5 from "p5";
+import * as THREE from "three";
 import * as math from "mathjs";
 
-import Sketch from "../lib/Sketch";
-
-import vertexShader from "../assets/p5.vert?raw";
+import vertexShader from "../assets/main.vert?raw";
 import fragmentShader from "../assets/nn.frag?raw";
 
-let shader: p5.Shader;
-
-class DrawDomain extends Sketch {
+class DrawDomain {
   private _width: number;
   private _height: number;
-  private neuralNet: iModel;
+  private model: iModel;
 
-  constructor(width: number, height: number, neuralNet: iModel) {
-    super();
+  private scene: THREE.Scene;
+  private camera: THREE.OrthographicCamera;
+  private renderer: THREE.Renderer;
+  private mesh: THREE.Mesh;
+  private material: THREE.ShaderMaterial;
 
+  constructor(width: number, height: number, model: iModel) {
     this._width = width;
     this._height = height;
-    this.neuralNet = neuralNet;
-  }
+    this.model = model;
 
-  setup() {
-    this.createCanvas(this._width, this._height, this.WEBGL);
+    this.scene = new THREE.Scene();
 
-    this.strokeWeight(0);
+    this.camera = new THREE.OrthographicCamera(
+      -width / 2,
+      width / 2,
+      -height / 2,
+      height / 2,
+      1,
+      1000
+    );
+    this.camera.position.z = 5;
 
-    shader = this.createShader(vertexShader, fragmentShader);
+    this.renderer = new THREE.WebGLRenderer();
+    this.renderer.setSize(width, height);
+    document.body.appendChild(this.renderer.domElement);
+
+    const geometry = new THREE.PlaneGeometry(width, height);
+    this.material = new THREE.ShaderMaterial({
+      uniforms: {
+        resolution: {
+          value: new THREE.Vector2(width, height)
+        },
+        sizes: {
+          value: []
+        },
+        weights: {
+          value: []
+        },
+        biases: {
+          value: []
+        }
+      },
+      vertexShader,
+      fragmentShader
+    });
+    this.mesh = new THREE.Mesh(geometry, this.material);
+
+    this.scene.add(this.mesh);
   }
 
   draw() {
-    this.shader(shader);
-
     const uniforms = {
+      resolution: {
+        value: new THREE.Vector2(this._width, this._height)
+      },
       sizes: [] as number[],
       weights: [] as number[],
       biases: [] as number[]
     };
 
-    uniforms.sizes.push(this.neuralNet.layers[0].size[0]);
+    uniforms.sizes.push(this.model.layers[0].size[0]);
 
-    for (const { weights, biases, size } of this.neuralNet.layers) {
+    for (const { weights, biases, size } of this.model.layers) {
       const ws = math.transpose(weights);
 
       for (const row of ws) uniforms.weights.push(...row);
@@ -50,13 +82,24 @@ class DrawDomain extends Sketch {
       uniforms.sizes.push(size[1]);
     }
 
-    shader.setUniform("resolution", [400, 400]);
+    this.material.uniforms = {
+      resolution: {
+        value: new THREE.Vector2(this._width, this._height)
+      },
+      sizes: {
+        value: new Uint8Array(uniforms.sizes)
+      },
+      weights: {
+        value: new Float64Array(uniforms.weights)
+      },
+      biases: {
+        value: new Float64Array(uniforms.biases)
+      }
+    };
 
-    shader.setUniform("sizes", uniforms.sizes);
-    shader.setUniform("weights", uniforms.weights);
-    shader.setUniform("biases", uniforms.biases);
+    this.renderer.render(this.scene, this.camera);
 
-    this.rect(0, 0, this.width, this.height);
+    requestAnimationFrame(() => this.draw());
   }
 }
 
