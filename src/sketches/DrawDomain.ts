@@ -7,7 +7,7 @@ import fragmentShader from "../assets/nn.frag?raw";
 class DrawDomain {
   private _width: number;
   private _height: number;
-  private model: iModel;
+  private neuralNet: Model.Model;
 
   private scene: THREE.Scene;
   private camera: THREE.OrthographicCamera;

@@ -2,7 +2,7 @@ import * as math from "mathjs";
 
 import Layer from "./Layer";
 
-class NeuralNet implements iModel {
+class NeuralNet implements Model.Model {
   public layers: Layer[];
 
   constructor(...s: number[]) {
@@ -17,27 +17,27 @@ class NeuralNet implements iModel {
     }
   }
 
-  functions(fun: iActivation, prime: iActivation) {
+  functions(fun: Model.Activation, prime: Model.Activation) {
     for (const layer of this.layers) {
       layer.functions(fun, prime);
     }
   }
 
-  *ff(inputs: iVector): Generator<iVector, iGradient[], iVector> {
+  *ff(inputs: Vector): Generator<Vector, Model.Gradient[], Vector> {
     const ffs = [this.layers[0].ff(inputs)];
 
     for (let l = 0; l < this.layers.length - 1; l++) {
-      const pR = ffs[l].next().value as iVector;
+      const pR = ffs[l].next().value as Vector;
 
       ffs.push(this.layers[l + 1].ff(pR));
     }
 
-    let dC = yield ffs[this.layers.length - 1].next().value as iVector;
+    let dC = yield ffs[this.layers.length - 1].next().value as Vector;
 
-    const grad = [] as iGradient[];
+    const grad = [] as Model.Gradient[];
 
     for (let l = ffs.length - 1; l >= 0; l--) {
-      const [gW, gB] = ffs[l].next(dC).value as iGradient;
+      const [gW, gB] = ffs[l].next(dC).value as Model.Gradient;
 
       dC = math.multiply(gB, math.transpose(this.layers[l].weights));
 
@@ -47,21 +47,21 @@ class NeuralNet implements iModel {
     return grad.reverse();
   }
 
-  *train(dataset: iData[]): Generator<[iData, iVector], void, unknown> {
+  *train(dataset: Data.Set): Generator<[Data.Data, Vector], void, unknown> {
     const ts = this.layers.map((l) => l.train());
 
     for (const t of ts) t.next();
 
-    for (const point of dataset) {
-      const ff = this.ff(point.value);
+    for (const data of dataset) {
+      const ff = this.ff(data.value);
 
-      const r = ff.next().value as iVector;
+      const r = ff.next().value as Vector;
 
-      yield [point, r];
+      yield [data, r];
 
-      let dC = math.multiply(2, math.subtract(r, point.label)) as iVector;
+      let dC = math.multiply(2, math.subtract(r, data.label)) as Vector;
 
-      const grad = ff.next(dC).value as iGradient[];
+      const grad = ff.next(dC).value as Model.Gradient[];
 
       grad.forEach((g, i) => ts[i].next(g));
     }
