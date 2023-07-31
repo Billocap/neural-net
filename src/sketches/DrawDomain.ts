@@ -7,7 +7,7 @@ import fragmentShader from "../assets/nn.frag?raw";
 class DrawDomain {
   private _width: number;
   private _height: number;
-  private neuralNet: Model.Model;
+  private model: Model.Model;
 
   private scene: THREE.Scene;
   private camera: THREE.OrthographicCamera;
@@ -15,7 +15,7 @@ class DrawDomain {
   private mesh: THREE.Mesh;
   private material: THREE.ShaderMaterial;
 
-  constructor(width: number, height: number, model: iModel) {
+  constructor(width: number, height: number, model: Model.Model) {
     this._width = width;
     this._height = height;
     this.model = model;
