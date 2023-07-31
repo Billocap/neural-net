@@ -1,8 +1,10 @@
 import * as THREE from "three";
 import * as math from "mathjs";
 
-import vertexShader from "../assets/main.vert?raw";
-import fragmentShader from "../assets/nn.frag?raw";
+import Sketch from "@/lib/Sketch";
+
+import vertexShader from "@/assets/p5.vert?raw";
+import fragmentShader from "@/assets/nn.frag?raw";
 
 class DrawDomain {
   private _width: number;
