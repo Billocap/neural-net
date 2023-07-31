@@ -1,5 +1,5 @@
-import NeuralNet from "../lib/NeuralNet";
-import Sketch from "../lib/Sketch";
+import NeuralNet from "@/lib/NeuralNet";
+import Sketch from "@/lib/Sketch";
 
 class DrawMouseClass extends Sketch {
   private _width: number;

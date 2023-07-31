@@ -1,10 +1,10 @@
 import p5 from "p5";
 import * as math from "mathjs";
 
-import Sketch from "../lib/Sketch";
+import Sketch from "@/lib/Sketch";
 
-import vertexShader from "../assets/p5.vert?raw";
-import fragmentShader from "../assets/nn.frag?raw";
+import vertexShader from "@/assets/p5.vert?raw";
+import fragmentShader from "@/assets/nn.frag?raw";
 
 let shader: p5.Shader;
 

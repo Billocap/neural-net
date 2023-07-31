@@ -1,8 +1,8 @@
 import * as math from "mathjs";
 
-import Sketch from "../lib/Sketch";
-import NeuralNet from "../lib/NeuralNet";
-import Dataset from "../lib/Dataset";
+import Sketch from "@/lib/Sketch";
+import NeuralNet from "@/lib/NeuralNet";
+import Dataset from "@/lib/Dataset";
 
 class DrawTraining extends Sketch {
   private _width: number;
