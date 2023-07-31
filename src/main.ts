@@ -19,11 +19,11 @@ const m = 0.5 ?? Math.random() * 2 - 1;
 
 const n = 0.5 ?? Math.random();
 
-const lineClassifier = ([x, y]: iVector) => {
+const lineClassifier = ([x, y]: Vector) => {
   return m * x < y ? (m * x + n > y ? [1, 0, 0] : [0, 1, 0]) : [0, 0, 1];
 };
 
-const circleClassifier = ([x, y]: iVector) => {
+const circleClassifier = ([x, y]: Vector) => {
   return x ** 2 + y ** 2 > 0.5 ** 2 ? [1, 0, 0] : [0, 1, 0];
 };
 

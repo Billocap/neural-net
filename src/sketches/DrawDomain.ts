@@ -11,9 +11,9 @@ let shader: p5.Shader;
 class DrawDomain extends Sketch {
   private _width: number;
   private _height: number;
-  private neuralNet: iModel;
+  private neuralNet: Model.Model;
 
-  constructor(width: number, height: number, neuralNet: iModel) {
+  constructor(width: number, height: number, neuralNet: Model.Model) {
     super();
 
     this._width = width;

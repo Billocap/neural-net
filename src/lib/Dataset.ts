@@ -1,4 +1,4 @@
-class Dataset extends Array<iData> {
+class Dataset extends Array<Data.Data> {
   public batchSize: number;
 
   constructor(batchSize: number) {
@@ -7,7 +7,7 @@ class Dataset extends Array<iData> {
     this.batchSize = batchSize;
   }
 
-  generate(g: iGenerator, c: iClassifier) {
+  generate(g: Data.Generator, c: Data.Classifier) {
     for (let i = 0; i < this.batchSize; i++) {
       const value = g();
 
@@ -15,6 +15,20 @@ class Dataset extends Array<iData> {
 
       this.push({ value, label });
     }
+  }
+
+  shuffle() {
+    const shuffled = [];
+
+    while (this.length) {
+      const index = Math.random() * (this.length - 1);
+
+      const [item] = this.splice(Math.round(index), 1);
+
+      shuffled.push(item);
+    }
+
+    this.push(...shuffled);
   }
 }
 

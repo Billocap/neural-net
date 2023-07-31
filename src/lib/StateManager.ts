@@ -1,5 +1,5 @@
 class StateManager {
-  static save(name: string, model: iModel) {
+  static save(name: string, model: Model.Model) {
     const layers = model.layers.map((layer) => {
       const { weights, biases } = layer;
 
@@ -9,7 +9,7 @@ class StateManager {
     localStorage.setItem(name, JSON.stringify({ layers }));
   }
 
-  static export(model: iModel) {
+  static export(model: Model.Model) {
     const layers = model.layers.map((layer) => {
       const { weights, biases } = layer;
 
@@ -28,11 +28,11 @@ class StateManager {
     a.click();
   }
 
-  static load(name: string, target: iModel) {
+  static load(name: string, target: Model.Model) {
     const data = localStorage.getItem(name);
 
     if (data) {
-      const model = JSON.parse(data) as iModel;
+      const model = JSON.parse(data) as Model.Model;
 
       model.layers.forEach(({ weights, biases }, id) => {
         target.layers[id].weights = weights;
@@ -41,9 +41,9 @@ class StateManager {
     }
   }
 
-  static import(file: File, target: iModel) {
+  static import(file: File, target: Model.Model) {
     file.text().then((text) => {
-      const model = JSON.parse(text) as iModel;
+      const model = JSON.parse(text) as Model.Model;
 
       model.layers.forEach(({ weights, biases }, id) => {
         target.layers[id].weights = weights;

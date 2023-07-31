@@ -2,17 +2,18 @@ import * as math from "mathjs";
 
 import Sketch from "../lib/Sketch";
 import NeuralNet from "../lib/NeuralNet";
+import Dataset from "../lib/Dataset";
 
 class DrawTraining extends Sketch {
   private _width: number;
   private _height: number;
-  private dataset: iData[];
+  private dataset: Dataset;
   private neuralNet: NeuralNet;
 
   constructor(
     width: number,
     height: number,
-    dataset: iData[],
+    dataset: Dataset,
     neuralNet: NeuralNet
   ) {
     super();
@@ -56,7 +57,12 @@ class DrawTraining extends Sketch {
 
     error /= this.dataset.length;
 
+    this.strokeWeight(0);
+    this.fill("white");
+
     this.text(error, 10, 20);
+
+    this.dataset.shuffle();
 
     // if (error < 0.009) {
     //   console.log(this.neuralNet.layers);

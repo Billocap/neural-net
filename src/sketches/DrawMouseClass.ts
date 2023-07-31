@@ -23,7 +23,7 @@ class DrawMouseClass extends Sketch {
 
     const ff = this.neuralNet.ff([this.mouseX / 400, this.mouseY / 400]);
 
-    const [r, g, b] = ff.next().value as iVector;
+    const [r, g, b] = ff.next().value as Vector;
 
     this.strokeWeight(5);
 
